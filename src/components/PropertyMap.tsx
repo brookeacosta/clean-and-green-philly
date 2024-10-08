@@ -149,6 +149,53 @@ interface PropertyMapProps {
   prevCoordinate: Position | null;
   setPrevCoordinate: () => void;
 }
+
+// BROOKE CODE STARTS HERE 
+
+  // Define your map styles here
+  const StyleSwitcher = ({ map }) => {
+    const mapStyles = [
+      {
+        id: 'streets',
+        label: 'Streets',
+        style: 'https://api.maptiler.com/maps/streets/style.json?key=' + maptilerApiKey,
+      },
+      {
+        id: 'satellite',
+        label: 'Satellite',
+        style: 'https://api.maptiler.com/maps/satellite/style.json?key=' + maptilerApiKey,
+      },
+      {
+        id: 'dark',
+        label: 'Dark',
+        style: 'https://api.maptiler.com/maps/dark/style.json?key=' + maptilerApiKey,
+      },
+    ];
+  
+    const [currentStyle, setCurrentStyle] = useState(mapStyles[0].id);
+  
+    useEffect(() => {
+      if (map) {
+        map.setStyle(mapStyles.find(s => s.id === currentStyle).style);
+      }
+    }, [currentStyle, map]);
+  
+    return (
+      <div className="style-switcher">
+        {mapStyles.map(style => (
+          <button
+            key={style.id}
+            className={`style-button ${style.id === currentStyle ? 'active' : ''}`}
+            onClick={() => setCurrentStyle(style.id)}
+          >
+            {style.label}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+// BROOKE CODE ENDS HERE
 const PropertyMap: FC<PropertyMapProps> = ({
   featuresInView,
   setFeaturesInView,
@@ -452,6 +499,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
         onMoveEnd={handleSetFeatures}
       >
         <MapControls />
+
+        {/* BROOKE CODE */}
+        <StyleSwitcher map={map} /> {/* Add StyleSwitcher here */}
+
         {popupInfo && (
           <Popup
             className="customized-map-popup"
